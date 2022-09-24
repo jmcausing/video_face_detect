@@ -36,15 +36,13 @@ class Video_face_scan:
         # Get IP and hostname
         self.hostname=socket.gethostname()   
         self.IPAddr=socket.gethostbyname(self.hostname)   
-        # Slack
-        self.slack_channel = '#video_face_detect'
-        self.slack_token = 'xxxxx'
+
 
     def setup(self):
         # Setup folders
         print('# Setting up variables and other requirements..')
         # Image folder and files location for known friendly faces.
-        self.target_file = ['elisa.png','elon.jpg','roselle.png']
+        self.target_file = []
         self.target_file_dir = 'known_faces_images' # or specific path '/mnt/c/Users/JMC/python/face/images'  
         # Folder of unknown/intruder face so we can store images there.
         self.unknown_faces_dir = 'unknown_faces'    
@@ -65,16 +63,20 @@ class Video_face_scan:
         # Check if folder self.target_file_dir is empty
         if len(os.listdir(self.target_file_dir)) == 0:
             self.alert_and_shutdown(exitCode=1, msg='setup() - self.target_file_dir is empty')
-        # Check and shutdown if known face image files does NOT exist in self.target_file_dir 
-        for file in self.target_file:
-            if file not in os.listdir(self.target_file_dir):
-                self.alert_and_shutdown(exitCode=1, msg=f'setup() - image file {file} is not in self.target_file_dir. Shutting down!')
+        # If it reeached here, then self.target_file_dir is not empty and we'll appending files.
+        # Append image files from self.target_file_dir self.target_file
+        for file in os.listdir(self.target_file_dir):
+            self.target_file.append(file)
+        print(f'# These are the files of our known/friendly faces: {self.target_file}')
+        # Slack
+        self.slack_channel = '#video_face_detect'
+        self.slack_token = 'xxxxxx'
         # Gmail Setup
         self.sender = "johnmarkcausing@gmail.com"
         self.recipient = "johnmarkcausing@gmail.com"        
         self.mail_server_user = 'johnmarkcausing@gmail.com'
         self.mail_server_pass = 'xxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
-
+        self.email_subject = 'Intruder alert! Detected unknown face!'
         # We use this to process every other frame of video to save time
         self.process_this_frame = True
         ## Log settings
@@ -289,7 +291,7 @@ class Video_face_scan:
                             self.send_slack(message=":no_entry:"+msg,attachment=intruder_file_name)
                             # Send it to gmail
                             print('# Sending to gmail...')
-                            email_subject = f'Intruder alert! Detected unknown face at {current_time}'
+                            email_subject = f'{self.email_subject} - {current_time}'
                             email_body = msg
                             self.send_gmail(file=intruder_file_name,msg_subject=email_subject,msg_body=email_body)
                             print('# Done with this current loop frame. Checking next frame..')
