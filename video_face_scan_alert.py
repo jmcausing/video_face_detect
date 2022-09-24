@@ -35,7 +35,7 @@ class Video_face_scan:
         # Setup default variables
         #
         # Image folder and files location for known friendly faces.
-        self.target_file = ['elisa.png','elon.jpg','roselle.png']
+        self.target_file = ['elisa.png','elon.jpg','roselle.png','jm2.png']
         self.target_file_dir = 'known_faces_images' # or specific path '/mnt/c/Users/JMC/python/face/images'  
         # Get IP and hostname
         self.hostname=socket.gethostname()   
@@ -49,7 +49,7 @@ class Video_face_scan:
         self.sender = "johnmarkcausing@gmail.com"
         self.recipient = "johnmarkcausing@gmail.com"        
         self.mail_server_user = 'johnmarkcausing@gmail.com'
-        self.mail_server_pass = 'xxxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
+        self.mail_server_pass = 'xxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
 
         # Folder of unknown/intruder face so we can store images there.
         self.unknown_faces_dir = 'unknown_faces'    
@@ -62,10 +62,22 @@ class Video_face_scan:
         self.log_date_format = '%Y-%m-%d %H:%M:%S'
 
 
+        # Setup known face encoding
+        print('# Start encoding known faces..')
+        self.known_face_encodings = []         
+        self.encode_known_faces()
+
         ## Set up logging
         ls = self.logSetup(self.log_path, self.log_level, self.log_format, self.log_date_format)
         if ls != True:
             self.alert_and_shutdown(exitCode=1, msg='Error setting up logs')
+
+    def encode_known_faces(self):
+        # Load and encode all images from the list self.target_file (The known faces)
+        for image in self.target_file:
+            print(f"# Encoding image {image}")
+            load_image = face_recognition.load_image_file(f"{self.target_file_dir}/{image}")
+            self.known_face_encodings.append(face_recognition.face_encodings(load_image))      
 
     # Shutdown exit function
     def alert_and_shutdown(self, msg=None, exitCode=0):
@@ -155,17 +167,9 @@ class Video_face_scan:
             return True
 
     def compare_face(self,face_encodings):
-        print("# Starting compare_face()...")
         match = []
-        known_face_encodings = []        
-        # Load and encode all images from the list self.target_file (The known faces)
-        for image in self.target_file:
-            # print(f"# Encoding image {image}")
-            load_image = face_recognition.load_image_file(f"{self.target_file_dir}/{image}")
-            known_face_encodings.append(face_recognition.face_encodings(load_image))      
-
         # Loop each known faces encoding (the encoding per known faces image file)    
-        for index,known_face_encoding in enumerate(known_face_encodings):
+        for index,known_face_encoding in enumerate(self.known_face_encodings):
             # For debug
             # print(f"## Checking nown face encoding of: {self.target_file[index]} ")
             
@@ -176,9 +180,7 @@ class Video_face_scan:
 
         # This returns True or False in a list. If you have two target file and it doesn't match, it returns: [False, False]
         # If it matches one of the target file (from known faces), then it returns: [False, True] or [True, False]
-        print("# Done compare_face()...")
         return match
-
 
     def video_detect_start(self):
         # Get time and date
@@ -186,12 +188,10 @@ class Video_face_scan:
         logging.info('video_detect_start() - Start')
 
         # Start video capture from webcam
-        video_capture = cv2.VideoCapture(1)
+        video_capture = cv2.VideoCapture(0)
  
         # Infinite loop video frame capture starts here
         while True:
-
-            print("# Starting whie True loop...")
             # Grab a single frame of video
             ret, frame = video_capture.read()
 
@@ -257,8 +257,6 @@ class Video_face_scan:
                         except Exception as e:
                             print(e)
 
-
-
                  
                 # For debug
                 # else: 
@@ -270,7 +268,6 @@ class Video_face_scan:
 
     def run(self):
         print("# Starting video face detection...")
-        print("#")
         # Setup our environment
         self.setup()
         # Run the main function video_detect_start()    
