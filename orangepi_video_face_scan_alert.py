@@ -234,7 +234,7 @@ class Video_face_scan:
                     now = datetime.now()
                     current_time = now.strftime("%m-%d-%Y--%I-%M-%S-%p")
                     print(f"# Face detected at {current_time}")
-                    # This is currently working for orange pi
+                    # This is currently working for orange pigit
                     face_encodings = face_recognition.face_encodings(small_frame, face_locations)
                     # Not working for orange pi
                     # face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
