@@ -6,12 +6,12 @@ You can install this on a small/mini device like Orange Pi or Raspberry pi and p
 For windows, download and install `cmake` first https://cmake.org/download/
 
 ## Create virtual env
-python3 -m venv your_venv_folder
+python3 -m venv `your_venv_folder`
 cd your_venv_folder
 # Active venv
 .\Scripts\Activate.ps1 
 # Install required libraries from requirements.txt
-pip3 install -r requirements
+pip3 install -r requirements.txt
 
 Add images:
 Just add your known face image files in `known_faces_images` folder and enter the image file names from the variable `self.target_file`
