@@ -33,10 +33,6 @@ class Video_face_scan:
 
     def __init__(self):
         # Setup default variables
-        #
-        # Image folder and files location for known friendly faces.
-        self.target_file = ['elisa.png','elon.jpg','roselle.png','jm2.png']
-        self.target_file_dir = 'known_faces_images' # or specific path '/mnt/c/Users/JMC/python/face/images'  
         # Get IP and hostname
         self.hostname=socket.gethostname()   
         self.IPAddr=socket.gethostbyname(self.hostname)   
@@ -45,14 +41,40 @@ class Video_face_scan:
         self.slack_token = 'xxxxx'
 
     def setup(self):
+        # Setup folders
+        # Image folder and files location for known friendly faces.
+        self.target_file = ['elisa.png','elon.jpg','roselle.png']
+        self.target_file_dir = 'known_faces_images' # or specific path '/mnt/c/Users/JMC/python/face/images'  
+        # Folder of unknown/intruder face so we can store images there.
+        self.unknown_faces_dir = 'unknown_faces'    
+        # Check and create if self..unknown_faces_dir does not exist
+        if not os.path.isdir(self.unknown_faces_dir):
+            try:
+                os.mkdir(self.unknown_faces_dir)
+            except OSError as e:
+                logging.error(f"Couldn't create log folder: {e!r}\nShutting down.")
+                return f'{e!r}'
+        # Check and create if self.target_file_dir does not exist
+        if not os.path.isdir(self.target_file_dir):
+            try:
+                os.mkdir(self.target_file_dir)
+            except OSError as e:
+                logging.error(f"Couldn't create log folder: {e!r}\nShutting down.")
+                return f'{e!r}'
+        # Check if folder self.target_file_dir is empty
+        if len(os.listdir(self.target_file_dir)) == 0:
+            self.alert_and_shutdown(exitCode=1, msg='setup() - self.target_file_dir is empty')
+        # Check and shutdown if known face image files does NOT exist in self.target_file_dir 
+        for file in self.target_file:
+            if file not in os.listdir(self.target_file_dir):
+                self.alert_and_shutdown(exitCode=1, msg=f'setup() - image file {file} is not in self.target_file_dir. Shutting down!')
         # Gmail Setup
         self.sender = "johnmarkcausing@gmail.com"
         self.recipient = "johnmarkcausing@gmail.com"        
         self.mail_server_user = 'johnmarkcausing@gmail.com'
         self.mail_server_pass = 'xxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
 
-        # Folder of unknown/intruder face so we can store images there.
-        self.unknown_faces_dir = 'unknown_faces'    
+
         # We use this to process every other frame of video to save time
         self.process_this_frame = True
         ## Log settings
@@ -86,6 +108,7 @@ class Video_face_scan:
             sys.exit(exitCode)
         else:
             # Send slack!!!
+            print(f'# Shutting down! Error: {msg}')
             logging.info(f'alert_and_shutdown() - {msg}')
             self.send_slack(msg)
             sys.exit(exitCode)
