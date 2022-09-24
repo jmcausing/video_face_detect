@@ -42,6 +42,7 @@ class Video_face_scan:
 
     def setup(self):
         # Setup folders
+        print('# Setting up variables and other requirements..')
         # Image folder and files location for known friendly faces.
         self.target_file = ['elisa.png','elon.jpg','roselle.png']
         self.target_file_dir = 'known_faces_images' # or specific path '/mnt/c/Users/JMC/python/face/images'  
@@ -74,7 +75,6 @@ class Video_face_scan:
         self.mail_server_user = 'johnmarkcausing@gmail.com'
         self.mail_server_pass = 'xxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
 
-
         # We use this to process every other frame of video to save time
         self.process_this_frame = True
         ## Log settings
@@ -82,17 +82,34 @@ class Video_face_scan:
         self.log_level = logging.INFO  ## possible values: DEBUG, INFO, WARNING, ERROR, CRITICAL
         self.log_format = '%(asctime)s - [%(levelname)s]: %(message)s'
         self.log_date_format = '%Y-%m-%d %H:%M:%S'
-
-
+        # Checking if webcam exist..
+        print('# Searching for camera..')
+        for cam in range(-2,10):
+            try:
+                # For debug
+                # print(f'# Trying camera {cam}..')
+                video_capture = cv2.VideoCapture(cam)
+                frame_test = video_capture.read()
+                if 'True' in str(frame_test):
+                    print(f'# Found camera index: {cam}')
+                    self.camera = cam
+                    break
+            except Exception as e:
+                    print(e)
+        if 'False' in str(frame_test):
+            print('# Webcam not found!')   
         # Setup known face encoding
         print('# Start encoding known faces..')
         self.known_face_encodings = []         
         self.encode_known_faces()
-
         ## Set up logging
         ls = self.logSetup(self.log_path, self.log_level, self.log_format, self.log_date_format)
         if ls != True:
-            self.alert_and_shutdown(exitCode=1, msg='Error setting up logs')
+            self.alert_and_shutdown(exitCode=1, msg='Setup() - Error setting up logs')
+
+        print('# Setup finished!')
+
+
 
     def encode_known_faces(self):
         # Load and encode all images from the list self.target_file (The known faces)
@@ -211,7 +228,7 @@ class Video_face_scan:
         logging.info('video_detect_start() - Start')
 
         # Start video capture from webcam
-        video_capture = cv2.VideoCapture(0)
+        video_capture = cv2.VideoCapture(self.camera)
  
         # Infinite loop video frame capture starts here
         while True:
