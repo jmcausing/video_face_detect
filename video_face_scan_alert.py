@@ -97,7 +97,8 @@ class Video_face_scan:
             except Exception as e:
                     print(e)
         if 'False' in str(frame_test):
-            print('# Webcam not found!')   
+            # print('# Webcam not found!')   
+            self.alert_and_shutdown(exitCode=1, msg='Setup() - Camera not found! Shutting down!')
         # Setup known face encoding
         print('# Start encoding known faces..')
         self.known_face_encodings = []         
