@@ -2,6 +2,6 @@ cmake
 dlib
 face_recognition
 opencv-python
-sklearn
-awsretry
+#sklearn
+#awsretry
 slack-sdk

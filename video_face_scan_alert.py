@@ -95,6 +95,7 @@ class Video_face_scan:
                 if 'True' in str(frame_test):
                     print(f'# Found camera index: {cam}')
                     self.camera = cam
+                    video_capture.release()
                     break
             except Exception as e:
                     print(e)
