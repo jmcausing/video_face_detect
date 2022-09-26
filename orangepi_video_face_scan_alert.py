@@ -98,7 +98,7 @@ class Video_face_scan:
                     video_capture.release()
                     break
             except Exception as e:
-                    print(e)
+                    print(f'# Camera is not located from this index {cam}. Error: {e}')
         if 'False' in str(frame_test):
             # print('# Webcam not found!')   
             self.alert_and_shutdown(exitCode=1, msg='Setup() - Camera not found! Shutting down!')
