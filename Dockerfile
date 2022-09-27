@@ -34,7 +34,7 @@ RUN apt-get install -y --fix-missing \
 
 # RUN pip3 install cmake -vv
 
-RUN pip3 install dlib -vv
+RUN pip3 install dlib -v
 
 RUN pip3 install face_recognition -vv 
 
