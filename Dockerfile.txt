@@ -49,12 +49,12 @@ RUN pip3 install Pillow
 
 #RUN pip3 install scipy>=0.17.0
 
-# RUN pip3 install opencv-python -vv
+RUN pip3 install opencv-python -vv
 
-# RUN cd ~ && \
-#     mkdir -p vfd && \
-#     git clone https://github.com/jmcausing/video_face_detect vfd/ && \
-#     cd  vfd/ && \
-#     pip3 install -r requirements.txt -vv 
+RUN cd ~ && \
+    mkdir -p vfd && \
+    git clone https://github.com/jmcausing/video_face_detect vfd/ && \
+    cd  vfd/ && \
+    pip3 install -r requirements.txt -vv 
 
 CMD tail -f /dev/null
