@@ -3,5 +3,5 @@
 face_recognition
 opencv-python-headless
 #sklearn
-#awsretry
+##awsretry
 slack-sdk
