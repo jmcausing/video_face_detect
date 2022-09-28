@@ -1,7 +1,7 @@
-cmake
-dlib
+#cmake
+#dlib
 face_recognition
-opencv-python
+opencv-python-headless
 #sklearn
 #awsretry
 slack-sdk
