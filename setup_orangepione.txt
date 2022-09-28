@@ -26,6 +26,9 @@ cd ~
 git clone https://github.com/jmcausing/video_face_detect.git video_face_detect
 cd video_face_detect/
 
+# Alternative for opencv precompiled - not yet tested
+# https://github.com/dlime/Faster_OpenCV_4_Raspberry_Pi
+
 # Upgrade pip and install pip requirementts
 pip3 install --upgrade pip
 TMPDIR=~/tmp pip3 install -r ~/video_face_detect/requirements.txt -vv 
