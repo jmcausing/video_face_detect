@@ -1,17 +1,3 @@
-
-# Solution:
-# 1. Python script runs on systemd
-# 2. That has infinite while true loop
-# 3. Loop checks every 5 seconds
-# 4. That checks if the video_face_detect.py is running
-# 5. If not, run video_face_detect.py in backgroundw
-
-# To do:
-# Checker: folders if exist, slack API to test, gmail to test
-# Performance: Currently each known_faces encodes in every loop While try. 
-#   - Solution: At start: encode all known faces first to improve performance/speed
-
-from re import A
 import face_recognition
 import cv2
 import numpy as np
@@ -36,10 +22,17 @@ class Video_face_scan:
         # Get IP and hostname
         self.hostname=socket.gethostname()   
         self.IPAddr=socket.gethostbyname(self.hostname)   
-
+        # Slack
+        self.slack_channel = '#video_face_detect'
+        self.slack_token = 'xxxxxxxxx'
+        # Gmail Setup
+        self.sender = "johnmarkcausing@gmail.com"
+        self.recipient = "johnmarkcausing@gmail.com"        
+        self.mail_server_user = 'johnmarkcausing@gmail.com'
+        self.mail_server_pass = 'xxxxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
+        self.email_subject = 'Intruder alert! Detected unknown face!'
 
     def setup(self):
-        # Setup folders
         print('# Setting up variables and other requirements..')
         # Image folder and files location for known friendly faces.
         self.target_file = []
@@ -62,21 +55,12 @@ class Video_face_scan:
                 return f'{e!r}'
         # Check if folder self.target_file_dir is empty
         if len(os.listdir(self.target_file_dir)) == 0:
-            self.alert_and_shutdown(exitCode=1, msg='setup() - self.target_file_dir is empty')
+            self.alert_and_shutdown(exitCode=1, msg='Shutting down! setup() - known_face_images folder (elf.target_file_dir) is empty!')
         # If it reeached here, then self.target_file_dir is not empty and we'll appending files.
         # Append image files from self.target_file_dir self.target_file
         for file in os.listdir(self.target_file_dir):
             self.target_file.append(file)
         print(f'# These are the files of our known/friendly faces: {self.target_file}')
-        # Slack
-        self.slack_channel = '#video_face_detect'
-        self.slack_token = 'xxxxxx'
-        # Gmail Setup
-        self.sender = "johnmarkcausing@gmail.com"
-        self.recipient = "johnmarkcausing@gmail.com"        
-        self.mail_server_user = 'johnmarkcausing@gmail.com'
-        self.mail_server_pass = 'xxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
-        self.email_subject = 'Intruder alert! Detected unknown face!'
         # We use this to process every other frame of video to save time
         self.process_this_frame = True
         ## Log settings
@@ -98,7 +82,7 @@ class Video_face_scan:
                     video_capture.release()
                     break
             except Exception as e:
-                    print(f'# Camera is not located from this index {cam}. Error: {e}')
+                    print(e)
         if 'False' in str(frame_test):
             # print('# Webcam not found!')   
             self.alert_and_shutdown(exitCode=1, msg='Setup() - Camera not found! Shutting down!')
@@ -110,10 +94,8 @@ class Video_face_scan:
         ls = self.logSetup(self.log_path, self.log_level, self.log_format, self.log_date_format)
         if ls != True:
             self.alert_and_shutdown(exitCode=1, msg='Setup() - Error setting up logs')
-
         print('# Setup finished!')
-
-
+        print('#')
 
     def encode_known_faces(self):
         # Load and encode all images from the list self.target_file (The known faces)
@@ -134,6 +116,7 @@ class Video_face_scan:
             self.send_slack(msg)
             sys.exit(exitCode)
 
+    # Gmail send function
     def send_gmail(self,file,msg_subject,msg_body):
         # Make sure to enable Google Password App for gmail
         # https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
@@ -157,6 +140,7 @@ class Video_face_scan:
         mail_server.send_message(message)
         mail_server.quit()
 
+    # Slack send function
     def send_slack(self,message,attachment=None):
         client = client = WebClient(token=self.slack_token)
         # Send slack with attachment like intruder/unknown face alert
@@ -193,6 +177,7 @@ class Video_face_scan:
                 logging.warning(f"Got an error when trying to send Slack message: {e.response['error']}")
                 return False
 
+    # Setup logging
     def logSetup(self, log_path, log_level, log_format, log_date_format):
         # Setting up log facility
         target_dir = 'logs'
@@ -210,35 +195,32 @@ class Video_face_scan:
             logging.info('Logging setup complete')
             return True
 
+    # Compare unknown face to known faces
     def compare_face(self,face_encodings):
         match = []
         # Loop each known faces encoding (the encoding per known faces image file)    
         for index,known_face_encoding in enumerate(self.known_face_encodings):
             # For debug
-            # print(f"## Checking nown face encoding of: {self.target_file[index]} ")
-            
+            # print(f"## Checking known face encoding of: {self.target_file[index]} ")
             #Start comparing faces
             for face_encoding in face_encodings:
                 # See if the face is a match for the known face(s)
                 match.append(face_recognition.compare_faces(known_face_encoding, face_encoding)[0])
-
         # This returns True or False in a list. If you have two target file and it doesn't match, it returns: [False, False]
         # If it matches one of the target file (from known faces), then it returns: [False, True] or [True, False]
         return match
 
+    # Function to start detecting faces
     def video_detect_start(self):
         # Get time and date
         now = datetime.now()        
         logging.info('video_detect_start() - Start')
-
         # Start video capture from webcam
         video_capture = cv2.VideoCapture(self.camera)
- 
         # Infinite loop video frame capture starts here
         while True:
             # Grab a single frame of video
             ret, frame = video_capture.read()
-
             # Only process every other frame of video to save time
             if self.process_this_frame:
                 # Resize frame of video to 1/4 size for faster face recognition processing
@@ -247,8 +229,7 @@ class Video_face_scan:
                 # This doesn't work for Orange Pi so we use `small_frame` in face_encodings() instead
                 rgb_small_frame = small_frame[:, :, ::-1]
                 # Get face location from current video frame
-                face_locations = face_recognition.face_locations(rgb_small_frame)
-
+                face_locations = face_recognition.face_locations(small_frame)
                 # If face found from current video frame, encode it!          
                 if bool(face_locations):
                     # Get time and date so we can log it!
@@ -256,12 +237,11 @@ class Video_face_scan:
                     current_time = now.strftime("%m-%d-%Y--%I-%M-%S-%p")
                     print(f"# Face detected at {current_time}")
                     # This is currently working for orange pigit
-                    face_encodings = face_recognition.face_encodings(small_frame, face_locations)
+                    face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
                     # Not working for orange pi
                     # face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
                     # Run function compare_face() to compare faces from known faces (the list of image files)
                     match = self.compare_face(face_encodings)
-
                     # For debug
                     # print(match)
                     # Intruder unknown face alert starts here
@@ -270,7 +250,6 @@ class Video_face_scan:
                         logging.info(f'video_detect_start() - FRIENDLY! A face was found but it\'s one of the known friendly face. Log it {current_time}')
                         print(f'# FRIENDLY! A face was found but it\'s one of the known friendly face. Log it {current_time}')
                         print('#')
-                    
                     else:
                         logging.info(f'video_detect_start() - INTRUDER ALERT! An unknown face was detected. Please check the logs and unknown_faces folder.')
                         print(f'# Intruder alert! Log it and save the image - Log time: {current_time}')
@@ -297,16 +276,12 @@ class Video_face_scan:
                             self.send_gmail(file=intruder_file_name,msg_subject=email_subject,msg_body=email_body)
                             print('# Done with this current loop frame. Checking next frame..')
                             print('#')
-
                         except Exception as e:
-                            print(e)
-
-                 
+                            print(e)      
                 # For debug
                 # else: 
                 #    print(f'# No face found!! face_location: {face_locations}')
             self.process_this_frame = not self.process_this_frame
-            
         # Release handle to the webcam
         video_capture.release()
 
