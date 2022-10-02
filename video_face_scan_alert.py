@@ -11,6 +11,7 @@ import socket
 import smtplib
 import mimetypes
 from email.message import EmailMessage
+import math
 
 class Video_face_scan:
     """
@@ -31,6 +32,10 @@ class Video_face_scan:
         self.mail_server_user = 'johnmarkcausing@gmail.com'
         self.mail_server_pass = 'xxxxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
         self.email_subject = 'Intruder alert! Detected unknown face!'
+        # Face recognition tolerance and accuracy values
+        self.tolerance_compare = 0.5
+        self.tolerance_accuracy = 0.5
+
 
     def setup(self):
         print('# Setting up variables and other requirements..')
@@ -195,8 +200,20 @@ class Video_face_scan:
             logging.info('Logging setup complete')
             return True
 
+    # Calculate accuracy from facedistance results (face distance of target face and other faces)
+    def face_distance_to_conf(self,face_distance,face_match_threshold):
+        if face_distance > face_match_threshold:
+            range = (1.0 - face_match_threshold)
+            linear_val = (1.0 - face_distance) / (range * 2.0)
+            return linear_val
+        else:
+            range = face_match_threshold
+            linear_val = 1.0 - (face_distance / (range * 2.0))
+            return linear_val + ((1.0 - linear_val) * math.pow((linear_val - 0.5) * 2, 0.2))
+
     # Compare unknown face to known faces
     def compare_face(self,face_encodings):
+        accuracy_percentage = ''
         match = []
         # Loop each known faces encoding (the encoding per known faces image file)    
         for index,known_face_encoding in enumerate(self.known_face_encodings):
@@ -205,7 +222,21 @@ class Video_face_scan:
             #Start comparing faces
             for face_encoding in face_encodings:
                 # See if the face is a match for the known face(s)
-                match.append(face_recognition.compare_faces(known_face_encoding, face_encoding)[0])
+                is_match = face_recognition.compare_faces(known_face_encoding, face_encoding, self.tolerance_compare)[0]
+                if is_match:
+                    print(f"# Current face matched from the known face: {self.target_file[index]}")
+                    # Check accuracy for the face matched. No need to get accuracy for non-matched face
+                    face_distance = face_recognition.face_distance(known_face_encoding,face_encoding)
+                    accuracy = self.face_distance_to_conf(face_distance, 0.5)
+                    accuracy_percentage = "{:.0%}".format(float(accuracy)) # Convert to percentage
+                    # print(f'Accuracy: {accuracy_percentage}') # For debug
+                    # Append match value (True)
+                    match.append(is_match)
+                else:
+                    # Check accuracy for the face matched.
+                    match.append(is_match)
+        # Append accuracy value
+        match.append(accuracy_percentage)
         # This returns True or False in a list. If you have two target file and it doesn't match, it returns: [False, False]
         # If it matches one of the target file (from known faces), then it returns: [False, True] or [True, False]
         return match
@@ -243,11 +274,11 @@ class Video_face_scan:
                     # Run function compare_face() to compare faces from known faces (the list of image files)
                     match = self.compare_face(face_encodings)
                     # For debug
-                    # print(match)
+                    # print(match) # match[-1] is the percentag accuracy
                     # Intruder unknown face alert starts here
                     #
                     if True in match:
-                        logging.info(f'video_detect_start() - FRIENDLY! A face was found but it\'s one of the known friendly face. Log it {current_time}')
+                        logging.info(f'video_detect_start() - FRIENDLY! A face was found but it\'s one of the known friendly face.  Accuracy is : {match[-1]}')
                         print(f'# FRIENDLY! A face was found but it\'s one of the known friendly face. Log it {current_time}')
                         print('#')
                     else:
@@ -268,12 +299,12 @@ class Video_face_scan:
                             # Send slack alert with intruder's image
                             print(f'# Sending to slack!')
                             msg = f'Intruder alert! Unknown face image file name `{intruder_file_name}` is saved in `{self.unknown_faces_dir}` folder! - Time and date: `{current_time}`'
-                            self.send_slack(message=":no_entry:"+msg,attachment=intruder_file_name)
+                            #self.send_slack(message=":no_entry:"+msg,attachment=intruder_file_name)
                             # Send it to gmail
                             print('# Sending to gmail...')
                             email_subject = f'{self.email_subject} - {current_time}'
                             email_body = msg
-                            self.send_gmail(file=intruder_file_name,msg_subject=email_subject,msg_body=email_body)
+                            #self.send_gmail(file=intruder_file_name,msg_subject=email_subject,msg_body=email_body)
                             print('# Done with this current loop frame. Checking next frame..')
                             print('#')
                         except Exception as e:
