@@ -40,3 +40,8 @@ TMPDIR=~/tmp pip3 install -r ~/video_face_detect/requirements.txt -vv
 # Setup your slack token and gmail password
 # Gmail Line 78 - self.mail_server_pass = 'xxxxx'
 # Slack Line 73 - self.slack_token = 'xxxxxx'
+
+# Connect Wifi
+ip a # Get wifi iP 
+nmcli dev wifi list # Get wifi list
+nmcli dev wifi connect causing-pldt password xxxxx # Connect to it
