@@ -299,12 +299,12 @@ class Video_face_scan:
                             # Send slack alert with intruder's image
                             print(f'# Sending to slack!')
                             msg = f'Intruder alert! Unknown face image file name `{intruder_file_name}` is saved in `{self.unknown_faces_dir}` folder! - Time and date: `{current_time}`'
-                            #self.send_slack(message=":no_entry:"+msg,attachment=intruder_file_name)
+                            self.send_slack(message=":no_entry:"+msg,attachment=intruder_file_name)
                             # Send it to gmail
                             print('# Sending to gmail...')
                             email_subject = f'{self.email_subject} - {current_time}'
                             email_body = msg
-                            #self.send_gmail(file=intruder_file_name,msg_subject=email_subject,msg_body=email_body)
+                            self.send_gmail(file=intruder_file_name,msg_subject=email_subject,msg_body=email_body)
                             print('# Done with this current loop frame. Checking next frame..')
                             print('#')
                         except Exception as e:
