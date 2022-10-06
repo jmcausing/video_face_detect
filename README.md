@@ -5,6 +5,12 @@ You can install this on a small/mini device like Orange Pi or Raspberry pi and p
 # Setup:
 For windows, download and install `cmake` first https://cmake.org/download/
 
+# Orange Pi instructions:
+wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
+/bin/bash /setup.sh
+
+
+
 ## Create virtual env
 python3 -m venv `your_venv_folder`
 cd your_venv_folder
