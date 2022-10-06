@@ -1,7 +1,6 @@
 # Python script that detects unknown face and send alerts
 You can install this on a small/mini device like Orange Pi or Raspberry pi and put it to your front door or gate.
 
-
 # Setup:
 For windows, download and install `cmake` first https://cmake.org/download/
 
