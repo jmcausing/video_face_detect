@@ -25,12 +25,12 @@ class Video_face_scan:
         self.IPAddr=socket.gethostbyname(self.hostname)   
         # Slack
         self.slack_channel = '#video_face_detect'
-        self.slack_token = 'xxxxxxxxx'
+        self.slack_token = 'replace_slack_token'
         # Gmail Setup
-        self.sender = "johnmarkcausing@gmail.com"
-        self.recipient = "johnmarkcausing@gmail.com"        
-        self.mail_server_user = 'johnmarkcausing@gmail.com'
-        self.mail_server_pass = 'xxxxxxx' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
+        self.sender = "replace_gmail_email"
+        self.recipient = "replace_gmail_email"        
+        self.mail_server_user = 'replace_gmail_email'
+        self.mail_server_pass = 'replace_gmail_pass' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
         self.email_subject = 'Intruder alert! Detected unknown face!'
         # Face recognition tolerance and accuracy values
         self.tolerance_compare = 0.5

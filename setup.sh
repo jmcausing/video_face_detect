@@ -88,3 +88,5 @@ sudo cp /tmp/${SERVICE_NAME}.service /etc/systemd/system/${SERVICE_NAME}.service
 fi
 
 exit 0
+
+sed 's/replace_slack_token/replace_slack_tokenxxxxxxx/g' /opt/video_face_detect/orangepi_video_face_scan_alert
