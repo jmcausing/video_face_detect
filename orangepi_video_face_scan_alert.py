@@ -20,6 +20,7 @@ class Video_face_scan:
 
     def __init__(self):
         # Setup default variables
+        self.py_script_path = os.path.dirname(os.path.realpath(__file__))
         # Get IP and hostname
         self.hostname=socket.gethostname()   
         self.IPAddr=socket.gethostbyname(self.hostname)   
@@ -187,7 +188,7 @@ class Video_face_scan:
     def logSetup(self, log_path, log_level, log_format, log_date_format):
         # Setting up log facility
         target_dir = 'logs'
-        if not os.path.isdir(target_dir):
+        if not os.path.isdir(self.py_script_path + '/' + target_dir):
             try:
                 os.mkdir(target_dir)
             except OSError as e:
