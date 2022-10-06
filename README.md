@@ -11,6 +11,7 @@ wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
 /bin/bash /setup.sh
 
 
+# Windows Instructions
 
 ## Create virtual env
 python3 -m venv `your_venv_folder`
