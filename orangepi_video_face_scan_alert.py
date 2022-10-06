@@ -110,6 +110,7 @@ class Video_face_scan:
     def encode_known_faces(self):
         # Load and encode all images from the list self.target_file (The known faces)
         for image in self.target_file:
+            logging.info(f"# encode_known_faces() - Encoding image {image}")
             print(f"# Encoding image {image}")
             load_image = face_recognition.load_image_file(f"{self.target_file_dir}/{image}")
             self.known_face_encodings.append(face_recognition.face_encodings(load_image))      
