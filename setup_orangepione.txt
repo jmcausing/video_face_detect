@@ -1,5 +1,5 @@
 
-# Steps to setup video_face_detect.py in  Orange Pi One Armbian 5.15.63-sunxi
+## Steps to setup video_face_detect.py in  Orange Pi One Armbian 5.15.63-sunxi
 # Update repo and upgrade packages
 sudo apt-get update -y && sudo apt-get upgrade -y
 
