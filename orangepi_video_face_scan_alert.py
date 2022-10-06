@@ -42,7 +42,7 @@ class Video_face_scan:
         print('# Setting up variables and other requirements..')
         # Image folder and files location for known friendly faces.
         self.target_file = []
-        self.target_file_dir = 'known_faces_images' # or specific path '/mnt/c/Users/JMC/python/face/images'  
+        self.target_file_dir = f'{self.py_script_path}/known_faces_images' # or specific path '/mnt/c/Users/JMC/python/face/images'  
         # Folder of unknown/intruder face so we can store images there.
         self.unknown_faces_dir = 'unknown_faces'    
         # Check and create if self..unknown_faces_dir does not exist
@@ -61,7 +61,7 @@ class Video_face_scan:
                 return f'{e!r}'
         # Check if folder self.target_file_dir is empty
         py_script_path = os.path.dirname(os.path.realpath(__file__))
-        if len(os.listdir(py_script_path + '/' + self.target_file_dir)) == 0:
+        if len(os.listdir(self.target_file_dir)) == 0:
             self.alert_and_shutdown(exitCode=1, msg=f'Shutting down! setup() - {self.target_file_dir} folder (elf.target_file_dir) is empty!')
         # If it reeached here, then self.target_file_dir is not empty and we'll appending files.
         # Append image files from self.target_file_dir self.target_file
@@ -191,7 +191,7 @@ class Video_face_scan:
     def logSetup(self, log_path, log_level, log_format, log_date_format):
         # Setting up log facility
         target_dir = f'{self.py_script_path}/logs'
-        if not os.path.isdir(self.py_script_path + '/' + target_dir):
+        if not os.path.isdir(target_dir):
             try:
                 os.mkdir(target_dir)
             except OSError as e:
