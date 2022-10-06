@@ -190,7 +190,7 @@ class Video_face_scan:
     # Setup logging
     def logSetup(self, log_path, log_level, log_format, log_date_format):
         # Setting up log facility
-        target_dir = 'logs'
+        target_dir = f'{self.py_script_path}/logs'
         if not os.path.isdir(self.py_script_path + '/' + target_dir):
             try:
                 os.mkdir(target_dir)
