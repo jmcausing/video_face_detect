@@ -7,6 +7,7 @@ For windows, download and install `cmake` first https://cmake.org/download/
 
 # Orange Pi instructions:
 wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
+
 /bin/bash /setup.sh
 
 
