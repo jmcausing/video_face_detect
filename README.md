@@ -6,9 +6,9 @@ You can install this on a small/mini device like Orange Pi or Raspberry pi and p
 For windows, download and install `cmake` first https://cmake.org/download/
 
 # Orange Pi instructions:
-wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
+`wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
 
-/bin/bash /setup.sh
+/bin/bash /setup.sh`
 
 
 
