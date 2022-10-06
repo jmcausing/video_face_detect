@@ -71,10 +71,18 @@ class Video_face_scan:
         # We use this to process every other frame of video to save time
         self.process_this_frame = True
         ## Log settings
-        self.log_path = 'logs/vfs.log'
+        self.log_path = f'{self.py_script_path}/logs/vfs.log'
         self.log_level = logging.INFO  ## possible values: DEBUG, INFO, WARNING, ERROR, CRITICAL
         self.log_format = '%(asctime)s - [%(levelname)s]: %(message)s'
         self.log_date_format = '%Y-%m-%d %H:%M:%S'
+
+        ## Set up logging
+        ls = self.logSetup(self.log_path, self.log_level, self.log_format, self.log_date_format)
+        if ls != True:
+            self.alert_and_shutdown(exitCode=1, msg='Setup() - Error setting up logs')
+        print('# Setup finished!')
+        print('#')
+
         # Checking if webcam exist..
         print('# Searching for camera..')
         for cam in range(-2,10):
@@ -97,12 +105,7 @@ class Video_face_scan:
         print('# Start encoding known faces..')
         self.known_face_encodings = []         
         self.encode_known_faces()
-        ## Set up logging
-        ls = self.logSetup(self.log_path, self.log_level, self.log_format, self.log_date_format)
-        if ls != True:
-            self.alert_and_shutdown(exitCode=1, msg='Setup() - Error setting up logs')
-        print('# Setup finished!')
-        print('#')
+
 
     def encode_known_faces(self):
         # Load and encode all images from the list self.target_file (The known faces)
