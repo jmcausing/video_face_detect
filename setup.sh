@@ -50,7 +50,7 @@ echo "## Installing required packages.."
 echo "#"
 mkdir $HOME/tmp
 pip3 install --upgrade pip
-# TMPDIR=~/tmp pip3 install -r $TARGET_DIR/requirements.txt
+TMPDIR=~/tmp pip3 install -r $TARGET_DIR/requirements.txt
 
 # Setting up systemd for python script
 SERVICE_NAME="video_face_detect"
