@@ -1,0 +1,5 @@
+Lib/
+Scripts/
+logs/
+unknown_faces/
+pyvenv.cfg

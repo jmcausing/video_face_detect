@@ -10,20 +10,12 @@ sudo mkswap /swapfile
 sudo swapon /swapfile
 
 # Install required packages
-sudo apt-get install -y build-essential cmake gfortran git wget curl graphicsmagick libgraphicsmagick1-dev libavcodec-dev libavformat-dev libboost-all-dev libgtk2.0-dev libjpeg-dev liblapack-dev libswscale-dev pkg-config python3-dev python3-numpy python3-pip zip
+sudo apt-get install -y build-essential cmake gfortran git wget curl graphicsmagick libgraphicsmagick1-dev libavcodec-dev libavformat-dev libboost-all-dev libgtk2.0-dev libjpeg-dev liblapack-dev libswscale-dev pkg-config python3-dev python3-numpy python3-pip zip libopenblas-dev
 sudo apt-get clean -y
-
-# This might make the image processing faster
-sudo apt-get install -y libopenblas-dev
-
-# Install dlib via pip
-screen -S pip
-mkdir $HOME/tmp
-TMPDIR=$HOME/tmp pip3 install dlib -vv
 
 # Download video face detect repo
 cd ~
-git clone https://github.com/jmcausing/video_face_detect.git video_face_detect
+git clone https://github.com/jmcausing/video_face_detect.git /opt/video_face_detect
 cd video_face_detect/
 
 # Alternative for opencv precompiled - not yet tested
@@ -31,6 +23,7 @@ cd video_face_detect/
 
 # Upgrade pip and install pip requirementts
 pip3 install --upgrade pip
+mkdir $HOME/tmp
 TMPDIR=~/tmp pip3 install -r ~/video_face_detect/requirements.txt -vv 
 
 # Only try this if it can't capture the webcam
