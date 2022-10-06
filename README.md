@@ -9,24 +9,24 @@ sed -i -e 's/\r$//' $HOME/setup.sh; screen -S setup bash -c "bash $HOME/setup.sh
 
 # Windows Instructions
 
-## For windows, download and install `cmake` first https://cmake.org/download/
+### For windows, download and install `cmake` first https://cmake.org/download/
 
-## Create virtual env
+### Create virtual env
 python3 -m venv `your_venv_folder`
 cd your_venv_folder
-# Active venv
+### Active venv
 .\Scripts\Activate.ps1 
-# Install required libraries from requirements.txt
+### Install required libraries from requirements.txt
 pip3 install -r requirements.txt
 
 Add images:
 Just add your known face image files in `known_faces_images` folder and enter the image file names from the variable `self.target_file`
 self.target_file = ['elisa.png','elon.jpg','roselle.png']
 
-# To run: 
+### Run python script
 python .\video_face_scan_alert.py
 
-# Example screenshots:
+### Example screenshots:
 ![image](https://user-images.githubusercontent.com/10601417/192078778-3de45591-6623-40be-8da0-09893618cd4f.png)
 ![image](https://user-images.githubusercontent.com/10601417/193448954-c2fe8753-6803-4b58-878b-f22ffb013d49.png)
 ![image](https://user-images.githubusercontent.com/10601417/193448932-5165ce96-7f1f-4566-926a-1bfbaf9a616b.png)
