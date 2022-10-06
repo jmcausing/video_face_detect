@@ -4,7 +4,7 @@ You can install this on a small/mini device like Orange Pi or Raspberry pi and p
 # Orange Pi instructions:
 wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh -O ~/setup.sh
 
-/bin/bash /setup.sh
+/bin/bash $HOME/setup.sh
 
 
 # Windows Instructions
