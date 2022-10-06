@@ -1,9 +1,6 @@
 # Python script that detects unknown face and send alerts
 You can install this on a small/mini device like Orange Pi or Raspberry pi and put it to your front door or gate.
 
-# Setup:
-For windows, download and install `cmake` first https://cmake.org/download/
-
 # Orange Pi instructions:
 wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
 
@@ -11,6 +8,8 @@ wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
 
 
 # Windows Instructions
+
+## For windows, download and install `cmake` first https://cmake.org/download/
 
 ## Create virtual env
 python3 -m venv `your_venv_folder`
