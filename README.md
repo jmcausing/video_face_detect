@@ -2,7 +2,7 @@
 You can install this on a small/mini device like Orange Pi or Raspberry pi and put it to your front door or gate.
 
 # Orange Pi instructions:
-wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh
+wget https://raw.githubusercontent.com/jmcausing/video_face_detect/main/setup.sh -O ~/setup.sh
 
 /bin/bash /setup.sh
 
