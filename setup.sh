@@ -43,5 +43,5 @@ echo "## Installing required packages.."
 echo "#"
 mkdir $HOME/tmp
 pip3 install --upgrade pip
-TMPDIR=~/tmp pip3 install -r $TARGET_DIR/requirements.txt -vv 
+TMPDIR=~/tmp pip3 install -r $TARGET_DIR/requirements.txt
 
