@@ -6,7 +6,8 @@ echo "# Starting setup..."
 echo "#"
 # Slack API token
 read -p "Enter Slack API Token: " slack_token
-# Gmail App passwd
+# Gmail App email and passwd
+read -p "Enter Gmail email address:  " gmail_email
 read -p "Enter Gmail APP password:  " gmail_passwd
 echo "#"
 
@@ -21,8 +22,8 @@ sudo apt-get update -qq -y && sudo apt-get upgrade -qq -y
 echo "## Setting up swap file..."
 echo "#"
 sudo swapoff -a
-sudo dd if=/dev/zero of=/swapfile bs=4K count=850 
-#sudo dd if=/dev/zero of=/swapfile bs=4K count=704850 
+#sudo dd if=/dev/zero of=/swapfile bs=4K count=850 # Small swap for testing
+sudo dd if=/dev/zero of=/swapfile bs=4K count=704850 
 sudo mkswap /swapfile``
 sudo swapon /swapfile
 
@@ -32,7 +33,7 @@ echo "#"
 sudo apt-get install -qq -y build-essential cmake gfortran git wget curl graphicsmagick libgraphicsmagick1-dev libavcodec-dev libavformat-dev libboost-all-dev libgtk2.0-dev libjpeg-dev liblapack-dev libswscale-dev pkg-config python3-dev python3-numpy python3-pip zip libopenblas-dev
 sudo apt-get clean -y
 
-echo "## Installing PIP packages.."
+echo "## Downloading repo and installing PIP packages.."
 echo "#"
 
 ### Check if a directory does not exist ###
@@ -44,6 +45,13 @@ then
 else
     git clone https://github.com/jmcausing/video_face_detect.git $TARGET_DIR
 fi
+
+# Replace gmail pass, email and slack token
+echo "## Setting up Gmail and Slack credentials.."
+echo "#"
+sed -i "s/replace_slack_token/$slack_token/g" $TARGET_DIR/orangepi_video_face_scan_alert.py
+sed -i "s/replace_gmail_pass/$gmail_passwd/g" $TARGET_DIR/orangepi_video_face_scan_alert.py
+sed -i "s/replace_gmail_email/$gmail_email/g" $TARGET_DIR/orangepi_video_face_scan_alert.py
 
 # Upgrade pip and install pip requirementts
 echo "## Installing required packages.."
@@ -89,4 +97,3 @@ fi
 
 exit 0
 
-sed 's/replace_slack_token/replace_slack_tokenxxxxxxx/g' /opt/video_face_detect/orangepi_video_face_scan_alert
