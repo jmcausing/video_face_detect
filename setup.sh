@@ -4,12 +4,17 @@ echo "## Video Face Detection"
 echo "# Author: John Mark Causing - Oct 6, 2022"
 echo "# Starting setup..."
 echo "#"
+echo "# Credentials setup:"
 # Slack API token
 read -p "Enter Slack API Token: " slack_token
 # Gmail App email and passwd
 read -p "Enter Gmail email address:  " gmail_email
 read -p "Enter Gmail APP password:  " gmail_passwd
 echo "#"
+echo "# Folder known faces setup"
+read -p "What is the Google Drive folder of the known faces images?  " gdrive_known_faces_folder
+read -p "Enter the Google drive folder (Make sure this is set to PUBLIC access. Example: https://drive.google.com/drive/u/0/folders/14aEtI9n-88ynKPiOvdn5IBAv-knN_DMQ : " gdrive_folder
+
 
 
 # Steps to setup video_face_detect.py in  Orange Pi One Armbian 5.15.63-sunxi
@@ -33,7 +38,7 @@ echo "#"
 sudo apt-get install -qq -y build-essential cmake gfortran git wget curl graphicsmagick libgraphicsmagick1-dev libavcodec-dev libavformat-dev libboost-all-dev libgtk2.0-dev libjpeg-dev liblapack-dev libswscale-dev pkg-config python3-dev python3-numpy python3-pip zip libopenblas-dev
 sudo apt-get clean -y
 
-echo "## Downloading repo and installing PIP packages.."
+echo "## Downloading video_face_detect repo.."
 echo "#"
 
 ### Check if a directory does not exist ###
@@ -46,12 +51,18 @@ else
     git clone https://github.com/jmcausing/video_face_detect.git $TARGET_DIR
 fi
 
-# Replace gmail pass, email and slack token
-echo "## Setting up Gmail and Slack credentials.."
+# Replace gmail pass, email, slack token and folder variables..
+echo "## Setting up Gmail,Slack credentials and folders.."
 echo "#"
 sed -i "s/replace_slack_token/$slack_token/g" $TARGET_DIR/orangepi_video_face_scan_alert.py
 sed -i "s/replace_gmail_pass/$gmail_passwd/g" $TARGET_DIR/orangepi_video_face_scan_alert.py
 sed -i "s/replace_gmail_email/$gmail_email/g" $TARGET_DIR/orangepi_video_face_scan_alert.py
+sed -i "s/known_faces_images/$gdrive_known_faces_folder/g" $TARGET_DIR/orangepi_video_face_scan_alert.py
+
+# Downloading Google drive folder of known faces images..
+echo "## Downloading Google drive folder of known faces images.."
+echo "#"
+gdown --folder $gdrive_folder -O $TARGET_DIR/$gdrive_known_faces_folder
 
 # Upgrade pip and install pip requirementts
 echo "## Installing required packages.."
@@ -86,7 +97,6 @@ Restart=on-failure
 [Install]
 WantedBy=multi-user.target
 EOF
-sudo cp /tmp/${SERVICE_NAME}.service /etc/systemd/system/${SERVICE_NAME}.service
     # restart daemon, enable and start service
     echo "Reloading daemon and enabling service"
     sudo systemctl daemon-reload
@@ -97,3 +107,7 @@ fi
 
 exit 0
 
+
+
+pip install gdown
+https://drive.google.com/drive/u/0/folders/14aEtI9n-88ynKPiOvdn5IBAv-knN_DMQ

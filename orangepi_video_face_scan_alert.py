@@ -59,8 +59,9 @@ class Video_face_scan:
                 logging.error(f"Couldn't create log folder: {e!r}\nShutting down.")
                 return f'{e!r}'
         # Check if folder self.target_file_dir is empty
-        if len(os.listdir(self.target_file_dir)) == 0:
-            self.alert_and_shutdown(exitCode=1, msg='Shutting down! setup() - known_face_images folder (elf.target_file_dir) is empty!')
+        py_script_path = os.path.dirname(os.path.realpath(__file__))
+        if len(os.listdir(py_script_path + '/' + self.target_file_dir)) == 0:
+            self.alert_and_shutdown(exitCode=1, msg=f'Shutting down! setup() - {self.target_file_dir} folder (elf.target_file_dir) is empty!')
         # If it reeached here, then self.target_file_dir is not empty and we'll appending files.
         # Append image files from self.target_file_dir self.target_file
         for file in os.listdir(self.target_file_dir):
