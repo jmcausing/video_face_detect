@@ -33,7 +33,7 @@ class Video_face_scan:
         self.mail_server_pass = 'replace_gmail_pass' # Google App Password for Gmail only - https://support.google.com/accounts/answer/185833?visit_id=637989785843231280-2031701535&p=InvalidSecondFactor&rd=1
         self.email_subject = 'Intruder alert! Detected unknown face!'
         # Face recognition tolerance and accuracy values
-        self.tolerance_compare = 0.5
+        self.tolerance_compare = 0.6
         self.tolerance_accuracy = 0.5
 
 
