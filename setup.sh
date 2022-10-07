@@ -94,6 +94,7 @@ After=network.target
 [Service]
 ExecStart=$PKG_PATH $SERVICE_PATH
 Restart=on-failure
+RestartSec=20
 [Install]
 WantedBy=multi-user.target
 EOF
